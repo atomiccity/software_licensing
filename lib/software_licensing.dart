@@ -1,8 +1,6 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
 library;
 
-export 'src/software_licensing_base.dart';
-
-// TODO: Export any libraries intended for clients of this package.
+export 'src/software_license.dart';
+export 'src/software_licensing_cache.dart';
+export 'src/software_licensing_client.dart';
+export 'src/software_licensing_validator.dart';

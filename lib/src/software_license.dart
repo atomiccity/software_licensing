@@ -10,6 +10,7 @@ class SoftwareLicense {
   final DateTime? validStartTime;
   final DateTime? validEndTime;
   final List<String> features = List.empty(growable: true);
+  final Map<String, dynamic> extraFields = Map.from({});
 
   SoftwareLicense({
     this.userId,
@@ -18,9 +19,13 @@ class SoftwareLicense {
     this.validStartTime,
     this.validEndTime,
     List<String>? features,
+    Map<String, dynamic>? extraFields,
   }) {
     if (features != null) {
       this.features.addAll(features);
+    }
+    if (extraFields != null) {
+      this.extraFields.addAll(extraFields);
     }
   }
 
@@ -32,6 +37,10 @@ class SoftwareLicense {
 
   bool hasFeature(String feature) {
     return features.contains(feature);
+  }
+
+  T get<T>(String fieldName) {
+    return extraFields[fieldName] as T;
   }
 
   static SoftwareLicense fromMap(Map<String, dynamic> map) {
@@ -68,6 +77,7 @@ class EncryptedSoftwareLicense extends SoftwareLicense {
     super.validStartTime,
     super.validEndTime,
     super.features,
+    super.extraFields,
   });
 
   static SoftwareLicense fromEncryptedData({
@@ -136,6 +146,7 @@ class AlwaysValidSoftwareLicense extends SoftwareLicense {
     super.validStartTime,
     super.validEndTime,
     super.features,
+    super.extraFields,
   });
 
   @override

@@ -54,6 +54,17 @@ class EncryptedLicenseCache extends LicenseCache {
     await licenseFile.writeAsString(_cleanLicense(license.encryptedData));
   }
 
+  Future<void> saveLicenseData(String licenseData) async {
+    var licenseFile = File(licensePath);
+
+    if (!licenseFile.existsSync()) {
+      licenseFile.create(recursive: true);
+    }
+
+    // Save encrypted data (strip off bookends if they exist)
+    await licenseFile.writeAsString(_cleanLicense(licenseData));
+  }
+
   @override
   Future<SoftwareLicense?> loadLicense() async {
     final licenseFile = File(licensePath);

@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:software_licensing/src/software_license.dart';
 
 class LicenseValidator {
-  Future<SoftwareLicense?> validateLicense({
+  Future<String?> validateLicense({
     String? licenseId,
     String? machineId,
     String? userId,
@@ -12,15 +14,15 @@ class LicenseValidator {
 
 class AlwaysValidLicenseValidator extends LicenseValidator {
   @override
-  Future<SoftwareLicense?> validateLicense({
+  Future<String?> validateLicense({
     String? licenseId,
     String? machineId,
     String? userId,
   }) async {
-    return AlwaysValidSoftwareLicense(
+    return json.encode(SoftwareLicense(
       licenseId: licenseId,
-      userId: userId,
       machineId: machineId,
-    );
+      userId: userId,
+    ).toMap());
   }
 }

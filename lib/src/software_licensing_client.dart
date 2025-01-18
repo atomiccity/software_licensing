@@ -21,18 +21,18 @@ class SoftwareLicensingClient {
     String? machineId,
     String? userId,
   }) async {
-    var license = await _licenseValidator.validateLicense(
+    var licenseData = await _licenseValidator.validateLicense(
       licenseId: licenseId,
       machineId: machineId,
       userId: userId,
     );
 
-    if (license == null) {
+    if (licenseData == null) {
       return AlwaysInvalidSoftwareLicense();
     }
 
-    // Save license locally, then return it
-    _licenseCache.saveLicense(license);
-    return license;
+    // Save license locally, then reload it (incase it was encrypted data)
+    _licenseCache.saveLicense(licenseData);
+    return await _licenseCache.loadLicense() ?? AlwaysInvalidSoftwareLicense();
   }
 }

@@ -5,11 +5,19 @@ import 'dart:typed_data';
 import 'package:pointycastle/pointycastle.dart';
 import 'package:software_licensing/src/software_license.dart';
 
-class LicenseCache {
+abstract class LicenseCache {
+  const LicenseCache();
+
+  Future<void> saveLicense(String licenseData);
+  Future<SoftwareLicense?> loadLicense();
+}
+
+class FileLicenseCache extends LicenseCache {
   final String licensePath;
 
-  const LicenseCache({required this.licensePath});
+  const FileLicenseCache({required this.licensePath});
 
+  @override
   Future<void> saveLicense(String licenseData) async {
     var licenseFile = File(licensePath);
 
@@ -21,6 +29,7 @@ class LicenseCache {
     await licenseFile.writeAsString(licenseData);
   }
 
+  @override
   Future<SoftwareLicense?> loadLicense() async {
     var licenseFile = File(licensePath);
 
@@ -34,7 +43,7 @@ class LicenseCache {
   }
 }
 
-class EncryptedLicenseCache extends LicenseCache {
+class EncryptedLicenseCache extends FileLicenseCache {
   static const licenseFileHeader = '-----BEGIN LICENSE FILE-----';
   static const licenseFileFooter = '------END LICENSE FILE------';
   final String publicKey;
@@ -112,5 +121,25 @@ class EncryptedLicenseCache extends LicenseCache {
         .replaceFirst(licenseFileFooter, '')
         .replaceAll('\r', '')
         .replaceAll('\n', '');
+  }
+}
+
+class CallbackLicenseCache extends LicenseCache {
+  final Future<void> Function({String licenseData}) onSave;
+  final Future<SoftwareLicense?> Function() onLoad;
+
+  CallbackLicenseCache({
+    required this.onSave,
+    required this.onLoad,
+  });
+
+  @override
+  Future<void> saveLicense(String licenseData) {
+    return onSave(licenseData: licenseData);
+  }
+
+  @override
+  Future<SoftwareLicense?> loadLicense() {
+    return onLoad();
   }
 }

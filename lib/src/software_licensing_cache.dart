@@ -125,7 +125,7 @@ class EncryptedLicenseCache extends FileLicenseCache {
 }
 
 class CallbackLicenseCache extends LicenseCache {
-  final Future<void> Function({String licenseData}) onSave;
+  final Future<void> Function(String licenseData) onSave;
   final Future<SoftwareLicense?> Function() onLoad;
 
   CallbackLicenseCache({
@@ -135,7 +135,7 @@ class CallbackLicenseCache extends LicenseCache {
 
   @override
   Future<void> saveLicense(String licenseData) {
-    return onSave(licenseData: licenseData);
+    return onSave(licenseData);
   }
 
   @override

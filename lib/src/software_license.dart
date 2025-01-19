@@ -45,7 +45,8 @@ class SoftwareLicense {
       licenseId: map['license_id'],
       validStartTime: (map['valid_start_time'] != null) ? DateTime.tryParse(map['valid_start_time']) : null,
       validEndTime: (map['valid_end_time'] != null) ? DateTime.tryParse(map['valid_start_time']) : null,
-      features: map['features'],
+      features: (map['features'] != null) ? List<String>.from(map['features']) : List.empty(),
+      extraFields: map['extra_fields'],
     );
   }
 
@@ -57,6 +58,7 @@ class SoftwareLicense {
       if (validStartTime != null) 'valid_start_time': validStartTime!.toIso8601String(),
       if (validEndTime != null) 'valid_end_time': validEndTime!.toIso8601String(),
       'features': features,
+      'extra_fields': extraFields,
     };
   }
 }

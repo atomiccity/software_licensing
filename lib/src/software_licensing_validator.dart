@@ -28,7 +28,7 @@ class HttpLicenseValidator extends LicenseValidator {
     Function(String message)? onError,
   }) async {
     var reqParams = {
-      'item_id': productId,
+      'item_id': productId.toString(),
       'license_key': licenseKey,
     };
     if (siteId != null) {

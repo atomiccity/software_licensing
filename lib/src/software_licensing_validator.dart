@@ -48,9 +48,9 @@ class HttpLicenseValidator extends LicenseValidator {
     }
 
     var responseMap = json.decode(response.body);
-    if (responseMap['status'] != 'valid') {
+    if (!responseMap['success']) {
       if (onError != null) {
-        onError("Invalid license: ${responseMap['status']}");
+        onError("Invalid license: ${responseMap['error']}");
       }
       return null;
     }

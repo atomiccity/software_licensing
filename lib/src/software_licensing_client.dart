@@ -8,6 +8,8 @@ class SoftwareLicensingClient {
   int? defaultProductId;
   String? defaultSiteId;
 
+  SoftwareLicense? _cachedLicense;
+
   SoftwareLicensingClient({
     required LicenseCache licenseCache,
     required LicenseValidator licenseValidator,
@@ -17,7 +19,8 @@ class SoftwareLicensingClient {
         _licenseValidator = licenseValidator;
 
   Future<SoftwareLicense?> loadLicense() async {
-    return _licenseCache.loadLicense();
+    _cachedLicense = await _licenseCache.loadLicense();
+    return _cachedLicense;
   }
 
   Future<SoftwareLicense> validateLicense({
@@ -51,5 +54,9 @@ class SoftwareLicensingClient {
       onSuccess("Thank you for registering ${license.customerName}");
     }
     return license ?? AlwaysInvalidSoftwareLicense();
+  }
+
+  bool validLicense() {
+    return ((_cachedLicense != null) && (_cachedLicense!.isValid()));
   }
 }

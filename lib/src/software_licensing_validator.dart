@@ -7,7 +7,8 @@ class LicenseValidator {
   Future<String?> validateLicense({
     String? licenseKey,
     String? siteId,
-    String? productId,
+    int? productId,
+    Function(String message)? onError,
   }) async {
     return null;
   }
@@ -23,7 +24,8 @@ class HttpLicenseValidator extends LicenseValidator {
   Future<String?> validateLicense({
     String? licenseKey,
     String? siteId,
-    String? productId,
+    int? productId,
+    Function(String message)? onError,
   }) async {
     var reqParams = {
       'item_id': productId,
@@ -39,11 +41,17 @@ class HttpLicenseValidator extends LicenseValidator {
 
     // Process response
     if (response.statusCode != 200) {
+      if (onError != null) {
+        onError("Licensing server error");
+      }
       return null;
     }
 
     var responseMap = json.decode(response.body);
     if (responseMap['status'] != 'valid') {
+      if (onError != null) {
+        onError("Invalid license");
+      }
       return null;
     }
 
@@ -55,7 +63,7 @@ class CallbackLicenseValidator extends LicenseValidator {
   final Future<String?> Function({
     String? licenseKey,
     String? siteId,
-    String? productId,
+    int? productId,
   }) onValidate;
 
   CallbackLicenseValidator({
@@ -66,7 +74,8 @@ class CallbackLicenseValidator extends LicenseValidator {
   Future<String?> validateLicense({
     String? licenseKey,
     String? siteId,
-    String? productId,
+    int? productId,
+    Function(String message)? onError,
   }) {
     return onValidate(licenseKey: licenseKey, siteId: siteId, productId: productId);
   }
@@ -77,7 +86,8 @@ class AlwaysValidLicenseValidator extends LicenseValidator {
   Future<String?> validateLicense({
     String? licenseKey,
     String? siteId,
-    String? productId,
+    int? productId,
+    Function(String message)? onError,
   }) async {
     return json.encode(AlwaysValidSoftwareLicense().toMap());
   }

@@ -45,7 +45,7 @@ class SoftwareLicensingClient {
     }
 
     // Save license locally, then reload it (incase it was encrypted data)
-    _licenseCache.saveLicense(licenseData);
+    await _licenseCache.saveLicense(licenseData);
     var license = await _licenseCache.loadLicense();
     if ((license == null) && (onError != null)) {
       onError("License could not be verified");
@@ -58,5 +58,17 @@ class SoftwareLicensingClient {
 
   bool validLicense() {
     return ((_cachedLicense != null) && (_cachedLicense!.isValid()));
+  }
+
+  String licensedUser() {
+    return _cachedLicense?.customerName ?? '';
+  }
+
+  String licensedEmail() {
+    return _cachedLicense?.customerEmail ?? '';
+  }
+
+  String licensedProduct() {
+    return _cachedLicense?.itemName ?? '';
   }
 }

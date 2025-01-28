@@ -28,8 +28,12 @@ class SoftwareLicense {
   });
 
   bool isValid() {
-    var now = DateTime.now();
-    return (license == 'valid') && (now.isBefore(expires ?? DateTime.fromMillisecondsSinceEpoch(0x7fffffffffffffff)));
+    if (expires == null) {
+      return license == 'valid';
+    } else {
+      var now = DateTime.now();
+      return ((license == 'valid') && (now.isBefore(expires!)));
+    }
   }
 
   static SoftwareLicense fromMap(Map<String, dynamic> map) {

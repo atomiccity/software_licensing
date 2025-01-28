@@ -17,14 +17,14 @@ class SoftwareLicensingClient {
   }
 
   Future<SoftwareLicense> validateLicense({
-    String? licenseId,
-    String? machineId,
-    String? userId,
+    String? licenseKey,
+    String? siteId,
+    String? productId,
   }) async {
     var licenseData = await _licenseValidator.validateLicense(
-      licenseId: licenseId,
-      machineId: machineId,
-      userId: userId,
+      licenseKey: licenseKey,
+      siteId: siteId,
+      productId: productId,
     );
 
     if (licenseData == null) {

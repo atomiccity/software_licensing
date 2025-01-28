@@ -5,9 +5,9 @@ import 'package:software_licensing/src/software_license.dart';
 
 class LicenseValidator {
   Future<String?> validateLicense({
-    String? licenseId,
-    String? machineId,
-    String? userId,
+    String? licenseKey,
+    String? siteId,
+    String? productId,
   }) async {
     return null;
   }
@@ -21,19 +21,16 @@ class HttpLicenseValidator extends LicenseValidator {
 
   @override
   Future<String?> validateLicense({
-    String? licenseId,
-    String? machineId,
-    String? userId,
+    String? licenseKey,
+    String? siteId,
+    String? productId,
   }) async {
-    var reqParams = <String, String>{};
-    if (licenseId != null) {
-      reqParams['license_id'] = licenseId;
-    }
-    if (machineId != null) {
-      reqParams['machine_id'] = machineId;
-    }
-    if (userId != null) {
-      reqParams['user_id'] = userId;
+    var reqParams = {
+      'item_id': productId,
+      'license_key': licenseKey,
+    };
+    if (siteId != null) {
+      reqParams['site_id'] = siteId;
     }
     var reqUri = Uri.https(host, path ?? '', reqParams);
 
@@ -56,9 +53,9 @@ class HttpLicenseValidator extends LicenseValidator {
 
 class CallbackLicenseValidator extends LicenseValidator {
   final Future<String?> Function({
-    String? licenseId,
-    String? machineId,
-    String? userId,
+    String? licenseKey,
+    String? siteId,
+    String? productId,
   }) onValidate;
 
   CallbackLicenseValidator({
@@ -66,22 +63,22 @@ class CallbackLicenseValidator extends LicenseValidator {
   });
 
   @override
-  Future<String?> validateLicense({String? licenseId, String? machineId, String? userId}) {
-    return onValidate(licenseId: licenseId, machineId: machineId, userId: userId);
+  Future<String?> validateLicense({
+    String? licenseKey,
+    String? siteId,
+    String? productId,
+  }) {
+    return onValidate(licenseKey: licenseKey, siteId: siteId, productId: productId);
   }
 }
 
 class AlwaysValidLicenseValidator extends LicenseValidator {
   @override
   Future<String?> validateLicense({
-    String? licenseId,
-    String? machineId,
-    String? userId,
+    String? licenseKey,
+    String? siteId,
+    String? productId,
   }) async {
-    return json.encode(SoftwareLicense(
-      licenseId: licenseId,
-      machineId: machineId,
-      userId: userId,
-    ).toMap());
+    return json.encode(AlwaysValidSoftwareLicense().toMap());
   }
 }

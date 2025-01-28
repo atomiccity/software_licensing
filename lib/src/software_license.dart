@@ -1,98 +1,106 @@
 class SoftwareLicense {
-  final String? userId;
-  final String? machineId;
-  final String? licenseId;
-  final DateTime? validStartTime;
-  final DateTime? validEndTime;
-  final List<String> features = List.empty(growable: true);
-  final Map<String, dynamic> extraFields = Map.from({});
+  final String license;
+  final int itemId;
+  final String itemName;
+  final String checksum;
+  final DateTime? expires;
+  final int paymentId;
+  final String customerName;
+  final String customerEmail;
+  final int licenseLimit;
+  final int siteCount;
+  final int? activationsLeft;
+  final int? priceId;
 
-  SoftwareLicense({
-    this.userId,
-    this.machineId,
-    this.licenseId,
-    this.validStartTime,
-    this.validEndTime,
-    List<String>? features,
-    Map<String, dynamic>? extraFields,
-  }) {
-    if (features != null) {
-      this.features.addAll(features);
-    }
-    if (extraFields != null) {
-      this.extraFields.addAll(extraFields);
-    }
-  }
+  const SoftwareLicense({
+    required this.license,
+    required this.itemId,
+    required this.itemName,
+    required this.checksum,
+    this.expires,
+    required this.paymentId,
+    required this.customerName,
+    required this.customerEmail,
+    required this.licenseLimit,
+    required this.siteCount,
+    this.activationsLeft,
+    this.priceId,
+  });
 
   bool isValid() {
     var now = DateTime.now();
-    return (now.isAfter(validStartTime ?? DateTime.fromMillisecondsSinceEpoch(0))) &&
-        (now.isBefore(validEndTime ?? DateTime.fromMillisecondsSinceEpoch(0x7fffffffffffffff)));
-  }
-
-  bool hasFeature(String feature) {
-    return features.contains(feature);
-  }
-
-  T get<T>(String fieldName) {
-    return extraFields[fieldName] as T;
+    return (license == 'valid') && (now.isBefore(expires ?? DateTime.fromMillisecondsSinceEpoch(0x7fffffffffffffff)));
   }
 
   static SoftwareLicense fromMap(Map<String, dynamic> map) {
     return SoftwareLicense(
-      userId: map['user_id'],
-      machineId: map['machine_id'],
-      licenseId: map['license_id'],
-      validStartTime: (map['valid_start_time'] != null) ? DateTime.tryParse(map['valid_start_time']) : null,
-      validEndTime: (map['valid_end_time'] != null) ? DateTime.tryParse(map['valid_start_time']) : null,
-      features: (map['features'] != null) ? List<String>.from(map['features']) : List.empty(),
-      extraFields: map['extra_fields'],
+      license: map['license'],
+      itemId: map['item_id'],
+      itemName: map['item_name'],
+      checksum: map['checksum'],
+      expires: (map['expires'] == 'lifetime') ? null : DateTime.tryParse(map['expires']),
+      paymentId: map['payment_id'],
+      customerName: map['customer_name'],
+      customerEmail: map['customer_email'],
+      licenseLimit: map['license_limit'],
+      siteCount: map['site_count'],
+      activationsLeft: (map['activations_left'] == 'unlimited') ? null : map['activations_left'],
+      priceId: (map['price_id'] == false) ? null : map['price_id'],
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      if (userId != null) 'user_id': userId,
-      if (machineId != null) 'machine_id': machineId,
-      if (licenseId != null) 'license_id': licenseId,
-      if (validStartTime != null) 'valid_start_time': validStartTime!.toIso8601String(),
-      if (validEndTime != null) 'valid_end_time': validEndTime!.toIso8601String(),
-      'features': features,
-      'extra_fields': extraFields,
+      'license': license,
+      'item_id': itemId,
+      'item_name': itemName,
+      'checksum': checksum,
+      'expires': (expires == null) ? 'lifetime' : expires!.toIso8601String(),
+      'payment_id': paymentId,
+      'customer_name': customerName,
+      'customer_email': customerEmail,
+      'license_limit': licenseLimit,
+      'site_count': siteCount,
+      'activations_left': (activationsLeft == null) ? 'unlimited' : activationsLeft,
+      'price_id': (priceId == null) ? false : priceId,
     };
   }
 }
 
 class AlwaysInvalidSoftwareLicense extends SoftwareLicense {
-  @override
-  bool isValid() {
-    return false;
-  }
+  AlwaysInvalidSoftwareLicense({
+    super.license = 'invalid',
+    super.itemId = 0,
+    super.itemName = '',
+    super.checksum = '',
+    super.paymentId = 0,
+    super.customerName = 'Invalid Customer',
+    super.customerEmail = 'Invalid Email',
+    super.licenseLimit = 0,
+    super.siteCount = 0,
+  });
 
   @override
-  bool hasFeature(String feature) {
+  bool isValid() {
     return false;
   }
 }
 
 class AlwaysValidSoftwareLicense extends SoftwareLicense {
   AlwaysValidSoftwareLicense({
-    super.userId,
-    super.machineId,
-    super.licenseId,
-    super.validStartTime,
-    super.validEndTime,
-    super.features,
-    super.extraFields,
+    super.license = 'valid',
+    super.itemId = 0,
+    super.itemName = 'Free Product',
+    super.checksum = '',
+    super.paymentId = 0,
+    super.customerName = 'Valid Customer',
+    super.customerEmail = 'Valid Email',
+    super.licenseLimit = 0,
+    super.siteCount = 0,
   });
 
   @override
   bool isValid() {
-    return true;
-  }
-
-  @override
-  bool hasFeature(String feature) {
     return true;
   }
 }

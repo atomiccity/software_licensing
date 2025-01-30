@@ -27,15 +27,6 @@ class SoftwareLicense {
     this.priceId,
   });
 
-  bool isValid() {
-    if (expires == null) {
-      return license == 'valid';
-    } else {
-      var now = DateTime.now();
-      return ((license == 'valid') && (now.isBefore(expires!)));
-    }
-  }
-
   static SoftwareLicense fromMap(Map<String, dynamic> map) {
     return SoftwareLicense(
       license: map['license'],
@@ -83,11 +74,6 @@ class AlwaysInvalidSoftwareLicense extends SoftwareLicense {
     super.licenseLimit = 0,
     super.siteCount = 0,
   });
-
-  @override
-  bool isValid() {
-    return false;
-  }
 }
 
 class AlwaysValidSoftwareLicense extends SoftwareLicense {
@@ -102,9 +88,4 @@ class AlwaysValidSoftwareLicense extends SoftwareLicense {
     super.licenseLimit = 0,
     super.siteCount = 0,
   });
-
-  @override
-  bool isValid() {
-    return true;
-  }
 }

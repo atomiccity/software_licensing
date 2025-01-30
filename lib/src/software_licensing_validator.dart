@@ -1,94 +1,33 @@
-import 'dart:convert';
+import 'package:software_licensing/software_licensing.dart';
 
-import 'package:http/http.dart' as http;
-import 'package:software_licensing/src/software_license.dart';
+abstract class LicenseValidator {
+  const LicenseValidator();
 
-class LicenseValidator {
-  Future<String?> validateLicense({
-    String? licenseKey,
-    String? siteId,
-    int? productId,
-    Function(String message)? onError,
-  }) async {
-    return null;
-  }
+  bool isValid(SoftwareLicense license);
 }
 
-class HttpLicenseValidator extends LicenseValidator {
-  final String host;
-  final String? path;
-
-  HttpLicenseValidator({required this.host, this.path});
-
+class StatusLicenseValidator extends LicenseValidator {
   @override
-  Future<String?> validateLicense({
-    String? licenseKey,
-    String? siteId,
-    int? productId,
-    Function(String message)? onError,
-  }) async {
-    var reqParams = {
-      'item_id': productId.toString(),
-      'license_key': licenseKey,
-    };
-    if (siteId != null) {
-      reqParams['site_id'] = siteId;
-    }
-    var reqUri = Uri.https(host, path ?? '', reqParams);
-
-    // Make request
-    var response = await http.get(reqUri);
-
-    // Process response
-    if (response.statusCode != 200) {
-      if (onError != null) {
-        onError("Licensing server error");
-      }
-      return null;
-    }
-
-    var responseMap = json.decode(response.body);
-    if (!responseMap['success']) {
-      if (onError != null) {
-        onError("Invalid license: ${responseMap['error']}");
-      }
-      return null;
-    }
-
-    return responseMap['license'];
+  bool isValid(SoftwareLicense license) {
+    return license.license.toLowerCase() == 'valid';
   }
 }
 
-class CallbackLicenseValidator extends LicenseValidator {
-  final Future<String?> Function({
-    String? licenseKey,
-    String? siteId,
-    int? productId,
-  }) onValidate;
+class BuildBeforeExpireLicenseValidator extends LicenseValidator {
+  final DateTime buildDate;
 
-  CallbackLicenseValidator({
-    required this.onValidate,
+  const BuildBeforeExpireLicenseValidator({
+    required this.buildDate,
   });
 
   @override
-  Future<String?> validateLicense({
-    String? licenseKey,
-    String? siteId,
-    int? productId,
-    Function(String message)? onError,
-  }) {
-    return onValidate(licenseKey: licenseKey, siteId: siteId, productId: productId);
-  }
-}
-
-class AlwaysValidLicenseValidator extends LicenseValidator {
-  @override
-  Future<String?> validateLicense({
-    String? licenseKey,
-    String? siteId,
-    int? productId,
-    Function(String message)? onError,
-  }) async {
-    return json.encode(AlwaysValidSoftwareLicense().toMap());
+  bool isValid(SoftwareLicense license) {
+    if (license.license == 'valid') {
+      return true;
+    } else if (license.expires != null) {
+      return license.expires!.isAfter(buildDate);
+    } else {
+      return false;
+    }
   }
 }

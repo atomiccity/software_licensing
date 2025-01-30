@@ -6,10 +6,12 @@ abstract class LicenseValidator {
   bool isValid(SoftwareLicense license);
 }
 
-class StatusLicenseValidator extends LicenseValidator {
+class EDDStatusLicenseValidator extends LicenseValidator {
   @override
   bool isValid(SoftwareLicense license) {
-    return license.license.toLowerCase() == 'valid';
+    if (license is AlwaysInvalidSoftwareLicense) return false;
+    if (license is AlwaysValidSoftwareLicense) return true;
+    return (license.license.toLowerCase() == 'valid');
   }
 }
 
@@ -22,6 +24,9 @@ class BuildBeforeExpireLicenseValidator extends LicenseValidator {
 
   @override
   bool isValid(SoftwareLicense license) {
+    if (license is AlwaysInvalidSoftwareLicense) return false;
+    if (license is AlwaysValidSoftwareLicense) return true;
+
     if (license.license == 'valid') {
       return true;
     } else if (license.expires != null) {

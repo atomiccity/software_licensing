@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:software_licensing/software_licensing.dart';
-import 'package:software_licensing/src/software_licensing_validator.dart';
 
 Future<void> main() async {
   // Create license client

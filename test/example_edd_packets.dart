@@ -1,0 +1,48 @@
+var eddNoExpiration = {
+  'success': true,
+  'license': 'valid',
+  'item_id': 340,
+  'item_name': 'Conductor',
+  'license_limit': 0,
+  'site_count': 2,
+  'expires': 'lifetime',
+  'activations_left': 'unlimited',
+  'checksum': 'cb751ce6c47621fd64a90deecbd0a377',
+  'payment_id': 1,
+  'customer_name': 'Michael Taylor',
+  'customer_email': 'micahel@atomic.city',
+  'price_id': false,
+};
+
+var eddWithExpiration = {
+  'success': true,
+  'license': 'valid',
+  'item_id': 340,
+  'item_name': 'Conductor',
+  'license_limit': 0,
+  'site_count': 1,
+  'expires': '2026-01-31 23:59:59',
+  'activations_left': 'unlimited',
+  'checksum': '6d4d4737c8f40252c448b94dcc98bdd6',
+  'payment_id': 2,
+  'customer_name': 'Michael Taylor',
+  'customer_email': 'micahel@atomic.city',
+  'price_id': false,
+};
+
+var eddExpired = {
+  'success': false,
+  'license': 'invalid',
+  'item_id': 340,
+  'item_name': 'Conductor',
+  'error': 'expired',
+  'expires': '2025-01-29 23:59:59',
+  'license_limit': 0,
+  'site_count': 1,
+  'activations_left': 'unlimited',
+  'checksum': '6d4d4737c8f40252c448b94dcc98bdd6',
+  'payment_id': 2,
+  'customer_name': 'Michael Taylor',
+  'customer_email': 'michael@atomic.city',
+  'price_id': false,
+};

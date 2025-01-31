@@ -1,7 +1,7 @@
 import 'package:software_licensing/src/software_license.dart';
-import 'package:software_licensing/src/software_licensing_cache.dart';
-import 'package:software_licensing/src/software_licensing_activator.dart';
-import 'package:software_licensing/src/software_licensing_validator.dart';
+import 'package:software_licensing/src/software_license_cache.dart';
+import 'package:software_licensing/src/software_license_activator.dart';
+import 'package:software_licensing/src/software_license_validator.dart';
 
 class SoftwareLicenseClient {
   final LicenseCache _licenseCache;

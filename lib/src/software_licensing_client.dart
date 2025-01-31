@@ -10,6 +10,7 @@ class SoftwareLicenseClient {
   final String? customerField;
   final String? emailField;
   final String? itemField;
+  final String? expireField;
 
   int? defaultProductId;
   String? defaultSiteId;
@@ -25,6 +26,7 @@ class SoftwareLicenseClient {
     this.customerField,
     this.emailField,
     this.itemField,
+    this.expireField,
   })  : _licenseCache = licenseCache,
         _licenseActivator = licenseActivator,
         _licenseValidator = licenseValidator;
@@ -104,6 +106,15 @@ class SoftwareLicenseClient {
       return _cachedLicense?.getString(itemField!) ?? '';
     } else {
       return '';
+    }
+  }
+
+  DateTime licenseExpireDate() {
+    var backupExpireDate = DateTime.now().add(Duration(days: 364 * 100));
+    if (expireField != null) {
+      return _cachedLicense?.getDateTime(expireField!) ?? backupExpireDate;
+    } else {
+      return backupExpireDate;
     }
   }
 }

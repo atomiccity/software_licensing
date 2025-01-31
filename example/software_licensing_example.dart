@@ -14,7 +14,7 @@ Future<void> main() async {
       host: 'example.com',
       path: '/api/v1/validate',
     ),
-    licenseValidator: BuildBeforeExpireLicenseValidator(
+    licenseValidator: EDDBuildBeforeExpireLicenseValidator(
       buildDate: DateTime(2024, 12, 30),
     ),
     defaultProductId: 1, // Whatever the activator expects this software ID to be

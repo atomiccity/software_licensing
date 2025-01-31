@@ -7,6 +7,9 @@ class SoftwareLicenseClient {
   final LicenseCache _licenseCache;
   final LicenseActivator _licenseActivator;
   final LicenseValidator _licenseValidator;
+  final String? customerField;
+  final String? emailField;
+  final String? itemField;
 
   int? defaultProductId;
   String? defaultSiteId;
@@ -19,6 +22,9 @@ class SoftwareLicenseClient {
     required LicenseValidator licenseValidator,
     this.defaultProductId,
     this.defaultSiteId,
+    this.customerField,
+    this.emailField,
+    this.itemField,
   })  : _licenseCache = licenseCache,
         _licenseActivator = licenseActivator,
         _licenseValidator = licenseValidator;
@@ -56,7 +62,11 @@ class SoftwareLicenseClient {
     }
     if (_cachedLicense != null) {
       if (validLicense() && onSuccess != null) {
-        onSuccess("Thank you for registering ${_cachedLicense!.customerName}");
+        if (customerField != null) {
+          onSuccess("Thank you for registering ${_cachedLicense!.getString(customerField!) ?? ""}");
+        } else {
+          onSuccess("Thank you for registering");
+        }
       } else if (!validLicense() && onError != null) {
         onError("License is invalid");
       }
@@ -65,18 +75,35 @@ class SoftwareLicenseClient {
   }
 
   bool validLicense() {
+    if (_cachedLicense is AlwaysInvalidSoftwareLicense) {
+      return false;
+    } else if (_cachedLicense is AlwaysValidSoftwareLicense) {
+      return true;
+    }
     return ((_cachedLicense != null) && (_licenseValidator.isValid(_cachedLicense!)));
   }
 
   String licensedUser() {
-    return _cachedLicense?.customerName ?? '';
+    if (customerField != null) {
+      return _cachedLicense?.getString(customerField!) ?? '';
+    } else {
+      return '';
+    }
   }
 
   String licensedEmail() {
-    return _cachedLicense?.customerEmail ?? '';
+    if (emailField != null) {
+      return _cachedLicense?.getString(emailField!) ?? '';
+    } else {
+      return '';
+    }
   }
 
   String licensedProduct() {
-    return _cachedLicense?.itemName ?? '';
+    if (itemField != null) {
+      return _cachedLicense?.getString(itemField!) ?? '';
+    } else {
+      return '';
+    }
   }
 }

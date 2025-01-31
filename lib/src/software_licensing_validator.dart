@@ -9,30 +9,36 @@ abstract class LicenseValidator {
 class EDDStatusLicenseValidator extends LicenseValidator {
   @override
   bool isValid(SoftwareLicense license) {
-    if (license is AlwaysInvalidSoftwareLicense) return false;
-    if (license is AlwaysValidSoftwareLicense) return true;
-    return (license.license.toLowerCase() == 'valid');
+    return (license.getString('license')?.toLowerCase() == 'valid');
   }
 }
 
-class BuildBeforeExpireLicenseValidator extends LicenseValidator {
+class EDDBuildBeforeExpireLicenseValidator extends LicenseValidator {
   final DateTime buildDate;
 
-  const BuildBeforeExpireLicenseValidator({
+  const EDDBuildBeforeExpireLicenseValidator({
     required this.buildDate,
   });
 
   @override
   bool isValid(SoftwareLicense license) {
-    if (license is AlwaysInvalidSoftwareLicense) return false;
-    if (license is AlwaysValidSoftwareLicense) return true;
-
-    if (license.license == 'valid') {
+    if (license.getString('license')?.toLowerCase() == 'valid') {
       return true;
-    } else if (license.expires != null) {
-      return license.expires!.isAfter(buildDate);
+    } else if (license.getDateTime('expires') != null) {
+      return license.getDateTime('expires')!.isAfter(buildDate);
     } else {
       return false;
     }
+  }
+}
+
+class CallbackLicenseValidator extends LicenseValidator {
+  final bool Function(SoftwareLicense license) onValidate;
+
+  const CallbackLicenseValidator({required this.onValidate});
+
+  @override
+  bool isValid(SoftwareLicense license) {
+    return onValidate(license);
   }
 }

@@ -36,7 +36,7 @@ Future<void> main() async {
   // exposed via [licenseClient] so you don't need to use softwareLicense
   // usually.
 
-  if (licenseClient.validLicense()) {
+  if (licenseClient.isLicenseValid()) {
     // Do something that requires valid licene here
   }
 }

@@ -61,20 +61,20 @@ class SoftwareLicenseClient {
       onError("License could not be verified");
     }
     if (_cachedLicense != null) {
-      if (validLicense() && onSuccess != null) {
+      if (isLicenseValid() && onSuccess != null) {
         if (customerField != null) {
           onSuccess("Thank you for registering ${_cachedLicense!.getString(customerField!) ?? ""}");
         } else {
           onSuccess("Thank you for registering");
         }
-      } else if (!validLicense() && onError != null) {
+      } else if (!isLicenseValid() && onError != null) {
         onError("License is invalid");
       }
     }
     return _cachedLicense ?? AlwaysInvalidSoftwareLicense();
   }
 
-  bool validLicense() {
+  bool isLicenseValid() {
     if (_cachedLicense is AlwaysInvalidSoftwareLicense) {
       return false;
     } else if (_cachedLicense is AlwaysValidSoftwareLicense) {

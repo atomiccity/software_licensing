@@ -1,0 +1,7 @@
+builders:
+  binaryPubKeyBuilder:
+    import: "package:software_licensing/binary_pub_key_builder.dart"
+    builder_factories: ["binaryPublicKeyBuilder"]
+    build_extensions: {".pem": [".g.dart"]}
+    build_to: source
+    auto_apply: root_package  

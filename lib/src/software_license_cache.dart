@@ -46,12 +46,22 @@ class FileLicenseCache extends LicenseCache {
 class EncryptedLicenseCache extends FileLicenseCache {
   static const licenseFileHeader = '-----BEGIN LICENSE FILE-----';
   static const licenseFileFooter = '------END LICENSE FILE------';
-  final String publicKey;
+  final List<int> publicKey;
 
   const EncryptedLicenseCache({
     required this.publicKey,
     required super.licensePath,
   });
+
+  factory EncryptedLicenseCache.fromPem({
+    required String publicKeyPem,
+    required String licensePath,
+  }) {
+    return EncryptedLicenseCache(
+      licensePath: licensePath,
+      publicKey: _pemToRsaPublicKeyBytes(publicKeyPem),
+    );
+  }
 
   @override
   Future<void> saveLicense(String licenseData) async {
@@ -82,7 +92,7 @@ class EncryptedLicenseCache extends FileLicenseCache {
     final verifier = Signer(algorithm);
 
     // Verify signature
-    verifier.init(false, PublicKeyParameter<RSAPublicKey>(_pemToRsaPublicKey(publicKey)));
+    verifier.init(false, PublicKeyParameter<RSAPublicKey>(_bytesToRsaPublicKey(publicKey)));
     if (!verifier.verifySignature(softwareLicense, signature)) {
       return AlwaysInvalidSoftwareLicense();
     }
@@ -91,10 +101,14 @@ class EncryptedLicenseCache extends FileLicenseCache {
     return SoftwareLicense.fromMap(jsonData);
   }
 
-  static RSAPublicKey _pemToRsaPublicKey(String pem) {
+  static List<int> _pemToRsaPublicKeyBytes(String pem) {
     final lines = pem.split('\n').where((line) => line.isNotEmpty && !line.startsWith('---')).toList();
     final b64String = lines.join('');
-    final asn1Parser = ASN1Parser(base64.decode(b64String));
+    return base64.decode(b64String);
+  }
+
+  static RSAPublicKey _bytesToRsaPublicKey(List<int> publicKey) {
+    final asn1Parser = ASN1Parser(Uint8List.fromList(publicKey));
     final asn1Sequence = asn1Parser.nextObject() as ASN1Sequence;
 
     final publicKeyString = asn1Sequence.elements?[1] as ASN1BitString;

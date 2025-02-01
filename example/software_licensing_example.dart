@@ -5,8 +5,8 @@ import 'package:software_licensing/software_licensing.dart';
 Future<void> main() async {
   // Create license client
   var licenseClient = SoftwareLicenseClient(
-    licenseCache: EncryptedLicenseCache(
-      publicKey: 'Public Key in PEM format',
+    licenseCache: EncryptedLicenseCache.fromPem(
+      publicKeyPem: 'Public Key in PEM format',
       licensePath: 'File name & path of license file',
     ),
     licenseActivator: HttpLicenseActivator(
@@ -22,6 +22,11 @@ Future<void> main() async {
 
   // First, try to load local license
   var softwareLicense = await licenseClient.loadLicense();
+
+  // If local license does exist, make sure it's valid
+  if (!licenseClient.isLicenseValid()) {
+    // License isn't valid
+  }
 
   // If local license doesn't exists, try to activate customer's license key
   softwareLicense ??= await licenseClient.activateLicense(

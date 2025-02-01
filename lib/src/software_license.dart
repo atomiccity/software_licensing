@@ -20,7 +20,12 @@ class SoftwareLicense {
   }
 
   DateTime? getDateTime(String field) {
-    return fields[field] as DateTime?;
+    var timeString = fields[field] as String?;
+    if (timeString == null) {
+      return null;
+    } else {
+      return DateTime.tryParse(timeString);
+    }
   }
 }
 

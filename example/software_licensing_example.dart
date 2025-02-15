@@ -3,6 +3,11 @@ import 'dart:io';
 import 'package:software_licensing/software_licensing.dart';
 
 Future<void> main() async {
+  // If using the EDDBuildBeforeExpireLicenseValidator, passing this to
+  // `flutter build` can inject the build date:
+  // --dart-define=BUILD_DATE="$(date -Idate)"
+  var buildDate = const String.fromEnvironment('BUILD_DATE');
+
   // Create license client
   var licenseClient = SoftwareLicenseClient(
     licenseCache: EncryptedLicenseCache.fromPem(
@@ -14,7 +19,7 @@ Future<void> main() async {
       path: '/api/v1/validate',
     ),
     licenseValidator: EDDBuildBeforeExpireLicenseValidator(
-      buildDate: DateTime(2024, 12, 30),
+      buildDate: DateTime.parse(buildDate),
     ),
     defaultProductId: 1, // Whatever the activator expects this software ID to be
     defaultSiteId: Platform.localHostname, // Can tie activation to host name

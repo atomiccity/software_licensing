@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+// ignore: depend_on_referenced_packages
 import 'package:build/build.dart';
 
 Builder binaryPublicKeyBuilder(BuilderOptions options) => BinaryPublicKeyBuilder();
@@ -21,6 +22,7 @@ class BinaryPublicKeyBuilder implements Builder {
 
     final outputBuffer = StringBuffer('// Generated file. Do not edit\n');
     var varName = input.pathSegments.last.replaceFirst(input.extension, '');
+    varName = varName.replaceAllMapped(RegExp("_[a-z]"), (Match m) => m.group(0)![1].toUpperCase());
     outputBuffer.writeln('const $varName = [');
     var count = 0;
     for (var b in bytes) {

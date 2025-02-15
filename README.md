@@ -11,6 +11,11 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/to/develop-packages). 
 -->
 
+To view a signed file from Bash:
+
+`base64 -d software.lic | jq -r .data | base64 -d --`
+
+
 TODO: Put a short description of the package here that helps potential users
 know whether this package might be useful for them.
 

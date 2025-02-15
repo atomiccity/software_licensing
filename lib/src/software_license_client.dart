@@ -117,4 +117,9 @@ class SoftwareLicenseClient {
       return backupExpireDate;
     }
   }
+
+  String licenseExpireString() {
+    var date = licenseExpireDate();
+    return '${date.year}-${date.month}-${date.day}';
+  }
 }
